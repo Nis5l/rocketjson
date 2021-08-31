@@ -1,18 +1,33 @@
-//!# ApiResonse
-//! ApiResponse is returned by enpoints
-//!
-//!# Example
-//!```
-//!#[derive(serde::Serialize)]
-//!pub struct HelloResponse {
-//!   greeting: String
-//!}
-//!#[post("/hello")]
-//!pub fn hello(data: RegisterRequest) -> rocketjson::ApiResponse<HelloResponse> {
-//!   rocketjson::ApiResponse::new(rocket::http::Status::Ok, HelloResponse { greeting: String::from("hey") })
-//!}
-//!```
+//!# Response
+//! [`ApiResponse`] is returned by enpoints to achieve a Json Response
 
+
+///Is returned by enpoints to achieve a Json Response
+///# Requirements
+///T has to implement [`serde::Serialize`]
+///# Example
+///- Code
+///```
+///#[derive(serde::Serialize)]
+///pub struct TestResponse {
+///   data: String
+///}
+///
+///#[post("/test")]
+///pub fn test() -> rocketjson::ApiResponse<RegisterResponse> {
+///     rocketjson::ApiResponse::new(
+///         rocket::http::Status::Ok, RegisterResponse {
+///         data: String::from("test")
+///     })
+///}
+///```
+///- Response (200 OK)
+///```
+///{
+///     data: "test"
+///}
+///```
+///[`serde::Serialize`]: https://docs.serde.rs/serde/trait.Serialize.html
 #[derive(Debug)]
 pub struct ApiResponse<T> {
     /// This is the Json-data sent to the client

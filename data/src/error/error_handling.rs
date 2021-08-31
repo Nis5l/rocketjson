@@ -1,18 +1,31 @@
+//!# Handeling errors
+//!Use [`get_catcher`] to transform errors into Json.
+
+///Transforms errors into Json
+///# Example
+///```
+///#[launch]
+///fn rocket() -> _ {
+///    rocket::build()
+///        .mount("/", routes![]).
+///        register("/", vec![rocketjson::error::get_catcher()])
+///}
+///```
+pub fn get_catcher() -> rocket::Catcher {
+    rocket::Catcher::new(None, request_catcher)
+}
+
 #[derive(serde::Serialize)]
 struct DefaultError {
-    message: String
+    error: String
 }
 
 impl DefaultError {
-    fn new(message: String) -> Self {
+    fn new(error: String) -> Self {
         Self {
-            message
+            error
         }
     }
-}
-
-pub fn get_request_catcher() -> rocket::Catcher {
-    rocket::Catcher::new(None, request_catcher)
 }
 
 fn request_catcher<'r>(status: rocket::http::Status, req: &'r rocket::Request<'_>) -> rocket::catcher::BoxFuture<'r> {

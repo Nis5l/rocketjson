@@ -4,6 +4,28 @@ extern crate proc_macro;
 
 use quote::quote;
 
+///# Validated Json Input
+///Structs that derive [`JsonBody`] can be used as Endpoint Input.
+///The data is read from the body as Json and validated via [`Validator`].
+///# Requirements
+///The struct has to implement [`serde::Deserialize`] and [`validator::Validate`]
+///# Example
+///```
+///#[derive(serde::Deserialize, validator::Validate, rocketjson::JsonBody)]
+///pub struct TestRequest {
+///   #[validate(length(min = 1))]
+///   username: String 
+///}
+///
+///#[post("/register", data="<data>")]
+///pub fn register(data: RegisterRequest) {
+/// //data is validated from json body
+///}
+///```
+///[`Validator`]: https://github.com/Keats/validator
+///[`validator::Validate`]: https://docs.rs/validator/0.14.0/validator/trait.Validate.html
+///[`serde::Deserialize`]: https://docs.serde.rs/serde/trait.Deserialize.html
+
 #[proc_macro_derive(JsonBody)]
 pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = syn::parse_macro_input!(input as syn::DeriveInput);
@@ -49,7 +71,7 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
 
                 let errors_ok = obj.validate();
                 if let Err(errors) = errors_ok {
-                    req.local_cache(|| std::sync::Arc::new(errors.clone()) );
+                    req.local_cache(|| std::sync::Arc::new(errors.clone()));
                     return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, Self::Error::ValidationError(errors)))
                 }
 
