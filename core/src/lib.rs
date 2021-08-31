@@ -27,7 +27,7 @@
 //!fn rocket() -> _ {
 //!    rocket::build()
 //!        .mount("/", routes![register]).
-//!        register("/", vec![rocketjson::error::get_bad_request_catcher()])
+//!        register("/", vec![rocketjson::error::get_request_catcher()])
 //!}
 //!```
 //!- Input 

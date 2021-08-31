@@ -1,6 +1,23 @@
+//!# ApiResonse
+//! ApiResponse is returned by enpoints
+//!
+//!# Example
+//!```
+//!#[derive(serde::Serialize)]
+//!pub struct HelloResponse {
+//!   greeting: String
+//!}
+//!#[post("/hello")]
+//!pub fn hello(data: RegisterRequest) -> rocketjson::ApiResponse<HelloResponse> {
+//!   rocketjson::ApiResponse::new(rocket::http::Status::Ok, HelloResponse { greeting: String::from("hey") })
+//!}
+//!```
+
 #[derive(Debug)]
 pub struct ApiResponse<T> {
+    /// This is the Json-data sent to the client
     pub json: rocket::serde::json::Json<T>,
+    /// This is the Statuscode sent to the client, it is not included in the Json
     pub status: rocket::http::Status,
 }
 
