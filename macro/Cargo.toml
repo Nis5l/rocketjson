@@ -1,6 +1,6 @@
 [package]
 name = "rocketjson_macro"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Nis5l <kirchler123@gmail.com>"]
 edition = "2018"
 documentation = "https://docs.rs/rocketjson"
@@ -8,6 +8,7 @@ repository = "https://github.com/Nis5l/rocketjson"
 license = "MIT OR Apache-2.0"
 keywords = ["rocket", "json", "web", "server", "api"]
 description = "Crate for working with Json and Rocket"
+readme = "../README.md"
 
 [lib]
 proc-macro = true
@@ -18,4 +19,4 @@ syn = "0.15.23"
 rocket = { version = "0.5.0-rc.1", features = ["json"] }
 validator = { version = "0.12", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
-rocketjson_data = { version = "1.0.0", path = "../data" }
+rocketjson_data = { version = "1.0.3", path = "../data" }

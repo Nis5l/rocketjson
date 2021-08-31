@@ -1,7 +1,8 @@
 //!# Crate for working with Rocket and Json.
+//!Crate for working with Json and [`Rocket`]. \
 //!
-//! Ultimately the goal is to have validated Structs enter and leave the endpoint as Json
-//! while having everything happen in the background.
+//!Ultimately the goal is to have validated Structs enter and leave the endpoint as Json
+//!while having everything happen in the background.
 //!
 //!# Example
 //!```
@@ -63,6 +64,7 @@
 //!    ]
 //!}
 //!```
+//![`Rocket`]: https://docs.rs/rocket/0.5.0-rc.1/rocket/index.html
 
 pub use rocketjson_macro::*;
 pub use rocketjson_data::*;
