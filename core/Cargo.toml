@@ -3,6 +3,11 @@ name = "rocketjson"
 version = "1.0.0"
 authors = ["Nis5l <kirchler123@gmail.com>"]
 edition = "2018"
+documentation = "https://docs.rs/rocketjson"
+repository = "https://github.com/Nis5l/rocketjson"
+license = "MIT OR Apache-2.0"
+keywords = ["rocket", "json", "web", "server", "api"]
+description = "Crate for working with Json and Rocket"
 
 [dependencies]
 rocketjson_macro = { version = "1.0.0", path = "../macro" }
