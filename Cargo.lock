@@ -939,7 +939,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rocket_json"
+name = "rocketjson"
 version = "1.0.0"
 dependencies = [
  "rocketjson_data",
