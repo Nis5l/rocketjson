@@ -1,3 +1,5 @@
+#![recursion_limit="256"]
+
 extern crate proc_macro;
 
 use crate::proc_macro::TokenStream;
@@ -8,13 +10,17 @@ use syn::{DeriveInput, parse_macro_input};
 pub fn writable_template_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
-    // get the name of the type we want to implement the trait for
     let name = &input.ident;
+
+    //TODO:
+    //reimplement Error handling once
+    //https://github.com/SergioBenitez/Rocket/issues/749
+    //is out.
 
     let expanded = quote! {
         #[rocket::async_trait]
-        impl<'r> rocket::data::FromData<'r> for #name<'r> {
-            type Error = JsonBodyError;
+        impl<'r> rocket::data::FromData<'r> for #name<'r> where Self: validator::Validate {
+            type Error = rocketjson::error::JsonBodyError;
 
             async fn from_data(req: &'r rocket::request::Request<'_>, data: rocket::data::Data<'r>) -> rocket::data::Outcome<'r, Self> {
                 if req.content_type() != Some(&rocket::http::ContentType::new("application", "json")) {
@@ -35,9 +41,10 @@ pub fn writable_template_derive(input: TokenStream) -> TokenStream {
 
                 let obj = json_opt.unwrap().0;
 
-                let errors = obj.validate();
-                if errors.is_err() {
-                    return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, Self::Error::ValidationError))
+                let errors_ok = obj.validate();
+                if let Err(errors) = errors_ok {
+                    req.local_cache(|| std::sync::Arc::new(errors.clone()) );
+                    return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, Self::Error::ValidationError(errors)))
                 }
 
                 rocket::outcome::Outcome::Success(obj)

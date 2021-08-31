@@ -940,20 +940,32 @@ dependencies = [
 
 [[package]]
 name = "rocket_json"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
- "rocket_json_macro",
+ "rocketjson_data",
+ "rocketjson_macro",
+ "validator 0.14.0",
 ]
 
 [[package]]
-name = "rocket_json_macro"
-version = "0.1.0"
+name = "rocketjson_data"
+version = "1.0.0"
+dependencies = [
+ "rocket",
+ "serde",
+ "validator 0.14.0",
+]
+
+[[package]]
+name = "rocketjson_macro"
+version = "1.0.0"
 dependencies = [
  "quote 0.6.13",
  "rocket",
+ "rocketjson_data",
  "serde",
  "syn 0.15.44",
- "validator",
+ "validator 0.12.0",
 ]
 
 [[package]]
@@ -1427,7 +1439,23 @@ dependencies = [
  "serde_json",
  "url",
  "validator_derive",
- "validator_types",
+ "validator_types 0.12.0",
+]
+
+[[package]]
+name = "validator"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d0f08911ab0fee2c5009580f04615fa868898ee57de10692a45da0c3bcc3e5e"
+dependencies = [
+ "idna",
+ "lazy_static",
+ "regex",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "url",
+ "validator_types 0.14.0",
 ]
 
 [[package]]
@@ -1443,7 +1471,7 @@ dependencies = [
  "quote 1.0.9",
  "regex",
  "syn 1.0.75",
- "validator_types",
+ "validator_types 0.12.0",
 ]
 
 [[package]]
@@ -1451,6 +1479,16 @@ name = "validator_types"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad9680608df133af2c1ddd5eaf1ddce91d60d61b6bc51494ef326458365a470a"
+
+[[package]]
+name = "validator_types"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ded9d97e1d42327632f5f3bae6403c04886e2de3036261ef42deebd931a6a291"
+dependencies = [
+ "proc-macro2 1.0.28",
+ "syn 1.0.75",
+]
 
 [[package]]
 name = "version_check"

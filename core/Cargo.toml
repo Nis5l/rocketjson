@@ -1,8 +1,10 @@
 [package]
-name = "rocket_json"
-version = "0.1.0"
+name = "rocketjson"
+version = "1.0.0"
 authors = ["Nis5l <kirchler123@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-rocket_json_macro = { version = "0.1.0", path = "../macro" }
+rocketjson_macro = { version = "1.0.0", path = "../macro" }
+rocketjson_data = { version = "1.0.0", path = "../data" }
+validator = "0.14"
