@@ -36,7 +36,7 @@
 //![`Validator`]: https://github.com/Keats/validator
 
 pub mod error_handling;
-pub mod json_body_error;
+pub mod errors;
 
 pub use error_handling::get_catcher;
-pub use json_body_error::JsonBodyError;
+pub use errors::{JsonBodyError, ApiError};

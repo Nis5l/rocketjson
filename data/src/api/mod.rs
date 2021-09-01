@@ -23,5 +23,7 @@
 //!}
 //!```
 pub mod response;
+pub mod response_err;
 
 pub use response::ApiResponse;
+pub use response_err::ApiResponseErr;

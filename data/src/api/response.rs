@@ -1,7 +1,6 @@
 //!# Response
 //! [`ApiResponse`] is returned by enpoints to achieve a Json Response
 
-
 ///Is returned by enpoints to achieve a Json Response
 ///# Requirements
 ///T has to implement [`serde::Serialize`]
@@ -14,11 +13,11 @@
 ///}
 ///
 ///#[post("/test")]
-///pub fn test() -> rocketjson::ApiResponse<RegisterResponse> {
+///pub fn test() -> rocketjson::ApiResponse<TestResponse> {
 ///     rocketjson::ApiResponse::new(
-///         rocket::http::Status::Ok, RegisterResponse {
-///         data: String::from("test")
-///     })
+///         rocket::http::Status::Ok,
+///         TestResponse { data: String::from("test") }
+///     )
 ///}
 ///```
 ///- Response (200 OK)
@@ -53,4 +52,3 @@ impl<'r, T> rocket::response::Responder<'r, 'static> for ApiResponse<T> where T:
             .ok()
     }
 }
-

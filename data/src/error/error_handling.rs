@@ -1,6 +1,8 @@
 //!# Handeling errors
 //!Use [`get_catcher`] to transform errors into Json.
 
+use crate::error;
+
 ///Transforms errors into Json
 ///# Example
 ///```
@@ -64,4 +66,15 @@ fn request_catcher<'r>(status: rocket::http::Status, req: &'r rocket::Request<'_
         .header(rocket::http::ContentType::JSON)
         .ok()
     })
+}
+
+impl<'r> rocket::response::Responder<'r, 'static> for error::ApiError {
+    fn respond_to(self, req: &'r rocket::request::Request<'_>) -> rocket::response::Result<'static> {
+        let json = rocket::serde::json::Json::from(DefaultError::new(self.error));
+
+        rocket::response::Response::build_from(json.respond_to(req).unwrap())
+            .status(self.status)
+            .header(rocket::http::ContentType::JSON)
+            .ok()
+    }
 }
