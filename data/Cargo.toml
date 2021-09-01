@@ -1,6 +1,6 @@
 [package]
 name = "rocketjson_data"
-version = "1.0.3"
+version = "1.0.4"
 authors = ["Nis5l <kirchler123@gmail.com>"]
 edition = "2018"
 documentation = "https://docs.rs/rocketjson"

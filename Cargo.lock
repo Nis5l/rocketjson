@@ -940,7 +940,7 @@ dependencies = [
 
 [[package]]
 name = "rocketjson"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "rocketjson_data",
  "rocketjson_macro",
@@ -949,7 +949,7 @@ dependencies = [
 
 [[package]]
 name = "rocketjson_data"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "rocket",
  "serde",
@@ -958,7 +958,7 @@ dependencies = [
 
 [[package]]
 name = "rocketjson_macro"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "quote 0.6.13",
  "rocket",

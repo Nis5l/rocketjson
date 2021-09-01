@@ -60,7 +60,7 @@ fn request_catcher<'r>(status: rocket::http::Status, req: &'r rocket::Request<'_
 
     return Box::pin(async move {
         rocket::response::Response::build_from(err.respond_to(req).unwrap())
-        .status(rocket::http::Status::BadRequest)
+        .status(status)
         .header(rocket::http::ContentType::JSON)
         .ok()
     })
