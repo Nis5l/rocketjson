@@ -1,4 +1,10 @@
 #[derive(Debug)]
+pub enum ApiErrors {
+    ApiError(ApiError),
+    DieselError(diesel::result::Error),
+}
+
+#[derive(Debug)]
 pub struct ApiError {
     pub status: rocket::http::Status,
     pub error: String

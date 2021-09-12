@@ -1,6 +1,6 @@
 [package]
 name = "rocketjson_macro"
-version = "1.0.3"
+version = "1.1.0"
 authors = ["Nis5l <kirchler123@gmail.com>"]
 edition = "2018"
 documentation = "https://docs.rs/rocketjson"
@@ -15,8 +15,8 @@ proc-macro = true
 
 [dependencies]
 quote = "0.6.10"
-syn = "0.15.23"
+syn = {version = "0.15.44", features=["full"] }
 rocket = { version = "0.5.0-rc.1", features = ["json"] }
 validator = { version = "0.12", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
-rocketjson_data = { version = "1.0.5", path = "../data" }
+rocketjson_data = { version = "1.1.0", path = "../data" }
