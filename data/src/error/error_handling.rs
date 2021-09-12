@@ -68,13 +68,25 @@ fn request_catcher<'r>(status: rocket::http::Status, req: &'r rocket::Request<'_
     })
 }
 
-impl<'r> rocket::response::Responder<'r, 'static> for error::ApiError {
+impl<'r> rocket::response::Responder<'r, 'static> for error::ApiErrors {
     fn respond_to(self, req: &'r rocket::request::Request<'_>) -> rocket::response::Result<'static> {
-        let json = rocket::serde::json::Json::from(DefaultError::new(self.error));
+        match self {
+            error::ApiErrors::ApiError(err) => {
+                let json = rocket::serde::json::Json::from(DefaultError::new(err.error));
 
-        rocket::response::Response::build_from(json.respond_to(req).unwrap())
-            .status(self.status)
-            .header(rocket::http::ContentType::JSON)
-            .ok()
+                rocket::response::Response::build_from(json.respond_to(req).unwrap())
+                    .status(err.status)
+                    .header(rocket::http::ContentType::JSON)
+                    .ok()
+            },
+            error::ApiErrors::DieselError(_err) => {
+                let json = rocket::serde::json::Json::from(DefaultError::new(String::from("Database error")));
+
+                rocket::response::Response::build_from(json.respond_to(req).unwrap())
+                    .status(rocket::http::Status::InternalServerError)
+                    .header(rocket::http::ContentType::JSON)
+                    .ok()
+            }
+        }
     }
 }

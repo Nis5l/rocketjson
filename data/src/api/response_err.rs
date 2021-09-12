@@ -60,31 +60,47 @@ use crate::error;
 #[derive(Debug)]
 pub struct ApiResponseErr<T> {
     /// This is the Json-data sent to the client
-    pub json: Result<rocket::serde::json::Json<T>, error::ApiError>,
+    pub json: Result<rocket::serde::json::Json<T>, error::ApiErrors>,
     /// This is the Statuscode sent to the client, it is not included in the Json
-    pub status: rocket::http::Status,
+    pub status: Option<rocket::http::Status>,
 }
 
 impl<T> ApiResponseErr<T> {
     pub fn ok(status: rocket::http::Status, json_data: T) -> Self {
         Self {
-            status,
+            status: Some(status),
             json: Ok(rocket::serde::json::Json::from(json_data))
         }
     }
 
-    pub fn err(status: rocket::http::Status, error: String) -> Self {
+    pub fn api_err(status: rocket::http::Status, error: String) -> Self {
         Self {
-            status,
-            json: Err(error::ApiError::new(status, error))
+            status: Some(status),
+            json: Err(error::ApiErrors::ApiError(error::ApiError::new(status, error)))
         }
+    }
+
+    pub fn err(error: error::ApiErrors) -> Self {
+        Self {
+            status: None,
+            json: Err(error)
+        }
+    }
+
+    pub fn get_status(&self) -> rocket::http::Status {
+        if self.status.is_none() {
+            return rocket::http::Status::InternalServerError
+        }
+
+        return self.status.unwrap();
     }
 }
 
 impl<'r, T> rocket::response::Responder<'r, 'static> for ApiResponseErr<T> where T: serde::Serialize {
     fn respond_to(self, req: &'r rocket::request::Request<'_>) -> rocket::response::Result<'static> {
+        let status = self.get_status();
         rocket::response::Response::build_from(self.json.respond_to(req).unwrap())
-            .status(self.status)
+            .status(status)
             .header(rocket::http::ContentType::JSON)
             .ok()
     }
