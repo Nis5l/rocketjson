@@ -37,6 +37,8 @@
 
 pub mod error_handling;
 pub mod errors;
+#[macro_use] pub mod error_util;
 
 pub use error_handling::get_catcher;
-pub use errors::{JsonBodyError, ApiError};
+pub use errors::{JsonBodyError, ApiErrors, ApiError};
+pub use error_util::ApiErrorsCreate;
