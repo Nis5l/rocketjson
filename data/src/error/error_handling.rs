@@ -1,7 +1,7 @@
 //!# Handeling errors
 //!Use [`get_catcher`] to transform errors into Json.
 
-use crate::error;
+use crate::error::{self, JsonBodyError};
 
 ///Transforms errors into Json
 ///# Example
@@ -33,24 +33,42 @@ impl DefaultError {
 fn request_catcher<'r>(status: rocket::http::Status, req: &'r rocket::Request<'_>) -> rocket::catcher::BoxFuture<'r> {
     use rocket::response::Responder;
 
-    loop { match status.code {
-        400 => {
-            let local_cache = req.local_cache(move || std::sync::Arc::new(validator::ValidationErrors::new()));
+    loop {
+        let local_cache = req.local_cache(move || JsonBodyError::NoError);
 
-            if local_cache.is_empty() {
-                break;
+        match local_cache {
+            JsonBodyError::NoError => break,
+            JsonBodyError::ValidationError(validation_errors) => {
+                let err = rocket::serde::json::Json::from(validation_errors.clone());
+                return Box::pin(async move {
+                    rocket::response::Response::build_from(err.respond_to(req).unwrap())
+                    .status(rocket::http::Status::BadRequest)
+                    .header(rocket::http::ContentType::JSON)
+                    .ok()
+                });
+            },
+            JsonBodyError::JsonValidationError => {
+                let err = rocket::serde::json::Json::from(DefaultError::new(String::from("Parsing JSON failed")));
+
+                return Box::pin(async move {
+                    rocket::response::Response::build_from(err.respond_to(req).unwrap())
+                    .status(status)
+                    .header(rocket::http::ContentType::JSON)
+                    .ok()
+                })
+            },
+            JsonBodyError::CustomError(message) => {
+                let err = rocket::serde::json::Json::from(DefaultError::new(message.clone()));
+
+                return Box::pin(async move {
+                    rocket::response::Response::build_from(err.respond_to(req).unwrap())
+                    .status(status)
+                    .header(rocket::http::ContentType::JSON)
+                    .ok()
+                })
             }
-
-            let err = rocket::serde::json::Json::from(local_cache.as_ref().clone());
-            return Box::pin(async move {
-                rocket::response::Response::build_from(err.respond_to(req).unwrap())
-                .status(rocket::http::Status::BadRequest)
-                .header(rocket::http::ContentType::JSON)
-                .ok()
-            })
-        },
-        _ => ()
-    } break; }
+        }
+    }
 
     let message = if status.reason().is_some() {
         String::from(status.reason().unwrap())

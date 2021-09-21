@@ -117,7 +117,7 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
                 #where_clause
                 {
 
-                type Error = rocketjson::error::JsonBodyError;
+                type Error = ();
 
                 async fn from_data(req: &'r rocket::request::Request<'_>, data: rocket::data::Data<'r>) -> rocket::data::Outcome<'r, Self> {
                     use validator::ValidateArgs;
@@ -130,7 +130,8 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
 
                     match json_opt {
                         rocket::outcome::Outcome::Failure(_) => {
-                            return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, Self::Error::JsonValidationError));
+                            req.local_cache(|| rocketjson::error::JsonBodyError::JsonValidationError);
+                            return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, ()));
                         },
                         rocket::outcome::Outcome::Forward(forward) => {
                             return rocket::outcome::Outcome::Forward(forward);
@@ -144,8 +145,8 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
                     let errors_ok = obj.validate_args(#rocket_states_variables) ;
 
                     if let Err(errors) = errors_ok {
-                        req.local_cache(|| std::sync::Arc::new(errors.clone()));
-                        return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, Self::Error::ValidationError(errors)))
+                        req.local_cache(move || rocketjson::error::JsonBodyError::ValidationError(errors));
+                        return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, ()))
                     }
 
                     rocket::outcome::Outcome::Success(obj)
