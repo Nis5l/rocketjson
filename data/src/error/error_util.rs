@@ -1,5 +1,6 @@
 use super::{ApiErrors, ApiError};
 
+///Easier way to create enum from supported errors
 pub trait ApiErrorsCreate<TIN> {
     fn to_rocketjson_error(error: TIN) -> ApiErrors;
 }
@@ -16,6 +17,18 @@ impl ApiErrorsCreate<ApiError> for ApiErrors {
     }
 }
 
+///To forward Errors as [`ApiResponseErr`] [`rjtry`] can be used.
+///# Example
+///```
+///pub async fn db_get_users() -> Result<String, diesel::result::Error> {
+///    ...
+///}
+///
+///pub async fn is_admin() -> ApiResponseErr<bool> {
+///    let user = rjtry!(db_get_users().await);
+///    user == "admin"
+///}
+///```
 #[macro_export]
 macro_rules! rjtry {
     ($i:expr) => (

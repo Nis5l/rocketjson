@@ -4,7 +4,19 @@
 use crate::error;
 
 ///Is returned by enpoints to achieve a Json response success or failure
+///Returned can be errors in [`ApiErrors`]. with `ApiResponseErr.err(...)`.
+///To forward Errors as [`ApiResponseErr`] [`rjtry`] can be used.
 ///# Example
+///```
+///pub async fn db_get_users() -> Result<String, diesel::result::Error> {
+///    ...
+///}
+///
+///pub async fn is_admin() -> ApiResponseErr<bool> {
+///    let user = rjtry!(db_get_users().await);
+///    user == "admin"
+///}
+///```
 ///```
 ///#[derive(serde::Deserialize, validator::Validate, rocketjson::JsonBody)]
 ///pub struct LoginRequest {
@@ -28,7 +40,7 @@ use crate::error;
 ///        );
 ///    }
 ///
-///    return rocketjson::ApiResponseErr::err(rocket::http::Status::InternalServerError, String::from("login failed"))
+///    return rocketjson::ApiResponseErr::api_err(rocket::http::Status::InternalServerError, String::from("login failed"))
 ///}
 ///```
 ///- Input
