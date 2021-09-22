@@ -1,6 +1,12 @@
 use super::{ApiErrors, ApiError};
 
 ///Easier way to create enum from supported errors
+///- Example
+///```
+///use rocketjson::{ApiResponseErr, error::{ApiErrors, ApiErrorsCreate}};
+///
+///ApiResponseErr::err(ApiErrors::to_rocketjson_error(error))
+///```
 pub trait ApiErrorsCreate<TIN> {
     fn to_rocketjson_error(error: TIN) -> ApiErrors;
 }
@@ -18,8 +24,12 @@ impl ApiErrorsCreate<ApiError> for ApiErrors {
 }
 
 ///To forward Errors as [`ApiResponseErr`] [`rjtry`] can be used.
+///# Requirements
+///the trait [`ApiErrorsCreate`] has to be in scope.
 ///# Example
 ///```
+///use rocketjson::{ApiResponseErr, rjtry, error::ApiErrorsCreate};
+///
 ///pub async fn db_get_users() -> Result<String, diesel::result::Error> {
 ///    ...
 ///}
@@ -35,7 +45,7 @@ macro_rules! rjtry {
         match $i {
             Result::Ok(val) => val,
             Result::Err(err) => {
-                return rocketjson::ApiResponseErr::<_>::err(rocketjson::error::ApiErrors::DieselError(err));
+                return rocketjson::ApiResponseErr::<_>::err(rocketjson::error::ApiErrors::to_rocketjson_error(err));
             }
         }
     )
