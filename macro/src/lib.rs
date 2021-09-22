@@ -117,7 +117,7 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
                 #where_clause
                 {
 
-                type Error = ();
+                type Error = ()
 
                 async fn from_data(req: &'r rocket::request::Request<'_>, data: rocket::data::Data<'r>) -> rocket::data::Outcome<'r, Self> {
                     use validator::ValidateArgs;

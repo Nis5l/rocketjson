@@ -17,7 +17,6 @@ impl ApiErrorsCreate<ApiError> for ApiErrors {
     }
 }
 
-
 ///To forward Errors as [`ApiResponseErr`] [`rjtry`] can be used.
 ///# Example
 ///```

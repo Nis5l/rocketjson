@@ -101,6 +101,7 @@ impl<'r> rocket::response::Responder<'r, 'static> for error::ApiErrors {
                 let json = rocket::serde::json::Json::from(DefaultError::new(String::from("Database error")));
 
                 rocket::response::Response::build_from(json.respond_to(req).unwrap())
+
                     .status(rocket::http::Status::InternalServerError)
                     .header(rocket::http::ContentType::JSON)
                     .ok()
