@@ -2,6 +2,7 @@
 pub enum ApiErrors {
     ApiError(ApiError),
     DieselError(diesel::result::Error),
+    SqlxError(sqlx::Error),
 }
 
 #[derive(Debug)]

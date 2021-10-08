@@ -17,6 +17,12 @@ impl ApiErrorsCreate<diesel::result::Error> for ApiErrors {
     }
 }
 
+impl ApiErrorsCreate<sqlx::Error> for ApiErrors {
+    fn to_rocketjson_error(error: sqlx::Error) -> ApiErrors {
+        ApiErrors::SqlxError(error)
+    }
+}
+
 impl ApiErrorsCreate<ApiError> for ApiErrors {
     fn to_rocketjson_error(error: ApiError) -> ApiErrors {
         ApiErrors::ApiError(error)
