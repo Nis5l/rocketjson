@@ -42,7 +42,7 @@ impl ApiErrorsCreate<ApiError> for ApiErrors {
 ///
 ///pub async fn is_admin() -> ApiResponseErr<bool> {
 ///    let user = rjtry!(db_get_users().await);
-///    user == "admin"
+///    ApiResponseErr::ok(rocket::http::Status::Ok, user == "admin")
 ///}
 ///```
 #[macro_export]
