@@ -11,21 +11,16 @@ pub trait ApiErrorsCreate<TIN> {
     fn to_rocketjson_error(error: TIN) -> ApiErrors;
 }
 
-impl ApiErrorsCreate<diesel::result::Error> for ApiErrors {
-    fn to_rocketjson_error(error: diesel::result::Error) -> ApiErrors {
-        ApiErrors::DieselError(error)
-    }
-}
-
-impl ApiErrorsCreate<sqlx::Error> for ApiErrors {
-    fn to_rocketjson_error(error: sqlx::Error) -> ApiErrors {
-        ApiErrors::SqlxError(error)
-    }
-}
-
 impl ApiErrorsCreate<ApiError> for ApiErrors {
     fn to_rocketjson_error(error: ApiError) -> ApiErrors {
         ApiErrors::ApiError(error)
+    }
+}
+
+impl<T> ApiErrorsCreate<T> for ApiErrors
+    where T: std::error::Error + Send + Sync + 'static {
+    fn to_rocketjson_error(error: T) -> ApiErrors {
+        ApiErrors::AnyError(anyhow::Error::new(error))
     }
 }
 

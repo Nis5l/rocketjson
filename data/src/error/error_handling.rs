@@ -97,11 +97,10 @@ impl<'r> rocket::response::Responder<'r, 'static> for error::ApiErrors {
                     .header(rocket::http::ContentType::JSON)
                     .ok()
             },
-            error::ApiErrors::DieselError(_) | error::ApiErrors::SqlxError(_) => {
-                let json = rocket::serde::json::Json::from(DefaultError::new(String::from("Database error")));
+            error::ApiErrors::AnyError(_) => {
+                let json = rocket::serde::json::Json::from(DefaultError::new(String::from("Internal server error")));
 
                 rocket::response::Response::build_from(json.respond_to(req).unwrap())
-
                     .status(rocket::http::Status::InternalServerError)
                     .header(rocket::http::ContentType::JSON)
                     .ok()

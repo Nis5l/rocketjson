@@ -1,8 +1,7 @@
 #[derive(Debug)]
 pub enum ApiErrors {
     ApiError(ApiError),
-    DieselError(diesel::result::Error),
-    SqlxError(sqlx::Error),
+    AnyError(anyhow::Error)
 }
 
 #[derive(Debug)]
