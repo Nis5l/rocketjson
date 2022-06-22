@@ -73,7 +73,6 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
     let mut rocket_states_variables: Vec<String> = Vec::new();
 
     for i in 0..10 {
-
         if i != 0 {
             let generic_str = format!("TRJ{}", i);
             let mut generic = syn::Generics::default();
@@ -88,24 +87,15 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
 
         }
 
-            {
-                let mut i = 0;
-                validate_args_generics.params.push(
-                    syn::parse_str(&format!("Args=({})", args_generics.iter().fold(String::from(""), |mut acc, x| {
-                        i+=1;
-                        let seperator = if args_generics.len() != i { "," } else { "" };
-                        acc.push_str(&format!("&'r {}{}", x, seperator)[..]);
-                        acc 
-                    }))).unwrap()
-                );
-            }
+        validate_args_generics.params.push(
+            syn::parse_str(&format!("Args=({})", args_generics.iter().map(|s| { format!("&'r {}", s) }).collect::<Vec<String>>().join(","))).unwrap()
+        );
 
-            where_clause.predicates = syn::punctuated::Punctuated::new();
-            where_clause.predicates.push(syn::parse_quote!(Self: validator::ValidateArgs#validate_args_generics));
-            for g in args_generics.iter() {
-                where_clause.predicates.push(syn::parse_str(&format!("{}: Sync + std::marker::Send", g)[..]).unwrap());
-            }
-
+        where_clause.predicates = syn::punctuated::Punctuated::new();
+        where_clause.predicates.push(syn::parse_quote!(Self: validator::ValidateArgs#validate_args_generics));
+        for g in args_generics.iter() {
+            where_clause.predicates.push(syn::parse_str(&format!("{}: Sync + std::marker::Send", g)[..]).unwrap());
+        }
 
         let rocket_states_folded = rocket_states.iter().fold(quote! {}, |acc, new| quote! {#acc #new});
         let rocket_states_variables: syn::Type = syn::parse_str(&format!("({})", rocket_states_variables.join(","))[..]).unwrap();
@@ -128,6 +118,8 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
 
                     let json_opt = rocket::serde::json::Json::<Self>::from_data(req, data).await;
 
+                    //TODO:
+                    //let opt =
                     match json_opt {
                         rocket::outcome::Outcome::Failure(_) => {
                             req.local_cache(|| rocketjson::error::JsonBodyError::JsonValidationError);
