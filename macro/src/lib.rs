@@ -109,21 +109,21 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
 
                 type Error = ();
 
-                async fn from_data(req: &'r rocket::request::Request<'_>, data: rocket::data::Data<'r>) -> rocket::data::Outcome<'r, Self> {
+                async fn from_data(req: &'r rocket::request::Request<'_>, data: (rocket::data::Data<'r>, rocket:http::Status)) -> rocket::data::Outcome<'r, Self> {
                     use validator::ValidateArgs;
 
                     if req.content_type() != Some(&rocket::http::ContentType::new("application", "json")) {
                         return rocket::outcome::Outcome::Forward(data);
                     }
 
-                    let json_opt = rocket::serde::json::Json::<Self>::from_data(req, data).await;
+                    let json_opt = rocket::serde::json::Json::<Self>::from_data(req, data.0).await;
 
                     //TODO:
                     //let opt =
                     match json_opt {
                         rocket::outcome::Outcome::Failure(_) => {
                             req.local_cache(|| rocketjson::error::JsonBodyError::JsonValidationError);
-                            return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, ()));
+                            return rocket::outcome::Outcome::Error((rocket::http::Status::BadRequest, ()));
                         },
                         rocket::outcome::Outcome::Forward(forward) => {
                             return rocket::outcome::Outcome::Forward(forward);
@@ -138,7 +138,7 @@ pub fn writable_template_derive(input: proc_macro::TokenStream) -> proc_macro::T
 
                     if let Err(errors) = errors_ok {
                         req.local_cache(move || rocketjson::error::JsonBodyError::ValidationError(errors));
-                        return rocket::outcome::Outcome::Failure((rocket::http::Status::BadRequest, ()))
+                        return rocket::outcome::Outcome::Error((rocket::http::Status::BadRequest, ()))
                     }
 
                     rocket::outcome::Outcome::Success(obj)
